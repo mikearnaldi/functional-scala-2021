@@ -55,21 +55,17 @@ object RealLifeAppErrors {
   case class InvalidUserId(msg: String) extends DomainError
   case class InvalidEmail(msg: String) extends DomainError
 
-  def validateUserId(user: User): ZIO[Any, InvalidUserId, Unit] = ???
-  def validateEmail(user: User): ZIO[Any, InvalidEmail, Unit] = ???
-
-  def validateUser(user: User) = for {
-    _ <- validateUserId(user)
-    _ <- validateEmail(user)
-  } yield ()
+  def validateUserId(userId: String): ZIO[Any, InvalidUserId, Unit] = ???
+  def validateEmail(email: String): ZIO[Any, InvalidEmail, Unit] = ???
 
   case class User(id: String, email: String)
 
-  def saveUser: User => ZIO[Any, QueryFailure, Unit] = ???
+  def saveUser(user: User): ZIO[Any, QueryFailure, Unit] = ???
 
   def createUser(id: String, email: String) = for {
-    user <- ZIO.succeed(User(id, email))
-    _ <- validateUser(user)
+    _ <- validateUserId(id)
+    _ <- validateEmail(email)
+    user = User(id, email)
     _ <- saveUser(user)
   } yield (user)
 }
