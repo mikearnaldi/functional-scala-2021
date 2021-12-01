@@ -9,7 +9,7 @@ enum IO[-R, +E, +A]:
 
   def catchAll[R2, E2, A2](f: E => IO[R2, E2, A2]) = this.foldM(IO.succeed, f)
   
-  def catchSome[R2, E2, A2 >: A, E3, E4](f: PartialFunction[E, (E3, IO[R2, E2, A2])])(implicit ev: E => E3 | E4): IO[R & R2, E2 | E4, A2] = this.foldM(IO.succeed, e => {
+  def catchSome[R2, E2, A2, A3 >: A | A2, E3, E4](f: PartialFunction[E, (E3, IO[R2, E2, A2])])(implicit ev: E => E3 | E4): IO[R & R2, E2 | E4, A3] = this.foldM(IO.succeed, e => {
     f.lift(e) match {
       case Some((e3, io)) if e3 == e => io
       case _ => IO.fail(ev(e).asInstanceOf[E4])
