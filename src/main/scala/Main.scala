@@ -34,18 +34,17 @@ val program = for {
   _ <- Effect fail ErrorB("b")
 } yield ()
 
-val afterHandlingErrorA = program.catchSome({
+val afterHandlingErrorA = program catchSome {
   case x: ErrorA => (x, Console putStrLn "recovered from A")
-})
+}
 
-val afterInjectingConsole = afterHandlingErrorA.inject(new Console {
-  def putStrLn(msg: => String) = Effect.succeed(println(msg))
-})
+val afterInjectingConsole = afterHandlingErrorA inject new Console {
+  def putStrLn(msg: => String) = Effect succeed println(msg)
+}
 
-val main = afterInjectingConsole
-  .inject(new Math {
-    def add(x: Int, y: Int) = Effect.succeed(x + y)
-  })
+val main = afterInjectingConsole inject new Math {
+  def add(x: Int, y: Int) = Effect succeed x + y
+}
 
 @main def root() = {
   main.unsafeRun match {
