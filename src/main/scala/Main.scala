@@ -34,13 +34,15 @@ val program = for {
   _ <- IO fail ErrorB("b")
 } yield ()
 
-val main = program
-  .catchSome(e => e match {
-    case x: ErrorA => (x, Console putStrLn "recovered from A")
-  })
-  .inject(new Console {
-    def putStrLn(msg: => String) = IO.succeed(println(msg))
-  })
+val afterHandlingErrorA = program.catchSome({
+  case x: ErrorA => (x, Console putStrLn "recovered from A")
+})
+
+val afterInjectingConsole = afterHandlingErrorA.inject(new Console {
+  def putStrLn(msg: => String) = IO.succeed(println(msg))
+})
+
+val main = afterInjectingConsole
   .inject(new Math {
     def add(x: Int, y: Int) = IO.succeed(x + y)
   })
