@@ -3,23 +3,23 @@
 //
 
 trait Console {
-  def putStrLn(msg: => String): IO[Any, Nothing, Unit]
+  def putStrLn(msg: => String): Effect[Any, Nothing, Unit]
 }
 
 object Console {
   implicit val tag: Tag[Console] = Tag()
 
-  def putStrLn(msg: => String) = IO use ((T: Console) => T putStrLn msg)
+  def putStrLn(msg: => String) = Effect.use[Console](_.putStrLn(msg))
 }
 
 trait Math {
-  def add(x: Int, y: Int): IO[Any, Nothing, Int]
+  def add(x: Int, y: Int): Effect[Any, Nothing, Int]
 }
 
 object Math {
   implicit val tag: Tag[Math] = Tag()
 
-  def add(x: Int, y: Int) = IO use ((T: Math) => T add(x, y))
+  def add(x: Int, y: Int) = Effect.use[Math](_.add(x, y))
 }
 
 case class ErrorA(a: String)
@@ -30,8 +30,8 @@ val program = for {
   _ <- Console putStrLn "world"
   y <- Math add(2, 3)
   _ <- Console putStrLn s"result: $y"
-  _ <- IO fail ErrorA("a")
-  _ <- IO fail ErrorB("b")
+  _ <- Effect fail ErrorA("a")
+  _ <- Effect fail ErrorB("b")
 } yield ()
 
 val afterHandlingErrorA = program.catchSome({
@@ -39,12 +39,12 @@ val afterHandlingErrorA = program.catchSome({
 })
 
 val afterInjectingConsole = afterHandlingErrorA.inject(new Console {
-  def putStrLn(msg: => String) = IO.succeed(println(msg))
+  def putStrLn(msg: => String) = Effect.succeed(println(msg))
 })
 
 val main = afterInjectingConsole
   .inject(new Math {
-    def add(x: Int, y: Int) = IO.succeed(x + y)
+    def add(x: Int, y: Int) = Effect.succeed(x + y)
   })
 
 @main def root() = {
