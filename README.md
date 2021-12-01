@@ -1,4 +1,4 @@
-## ZIO-like for Scala 3 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/mikearnaldi/functional-scala-2021)
+## ZIO-like for Scala 3 [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-908a85?logo=gitpod)](https://gitpod.io/#https://github.com/mikearnaldi/functional-scala-2021)
 
 This project is an experimentation project to explore the possibilities for a scala 3 optimized API for ZIO.
 
