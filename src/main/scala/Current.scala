@@ -55,8 +55,8 @@ object RealLifeAppErrors {
   case class InvalidUserId(msg: String) extends DomainError
   case class InvalidEmail(msg: String) extends DomainError
 
-  def validateUserId: User => ZIO[Any, InvalidUserId, Unit] = ???
-  def validateEmail: User => ZIO[Any, InvalidEmail, Unit] = ???
+  def validateUserId(user: User): ZIO[Any, InvalidUserId, Unit] = ???
+  def validateEmail(user: User): ZIO[Any, InvalidEmail, Unit] = ???
 
   def validateUser(user: User) = for {
     _ <- validateUserId(user)
